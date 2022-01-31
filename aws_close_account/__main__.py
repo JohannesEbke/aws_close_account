@@ -8,6 +8,10 @@ from random import choice
 from getpass import getpass
 
 
+def get_webdriver(typ):
+    return webdriver.__getattribute__(typ)()
+
+
 def wait_for_element(driver, by, value):
     print("....waiting for element ", by, value)
     while True:
@@ -34,8 +38,8 @@ def login_part_one(driver, email):
     return wait_for_element(driver, By.ID, "password")
 
 
-def reset_password(email):
-    driver = webdriver.Firefox()
+def reset_password(driver_typ, email):
+    driver = get_webdriver(driver_typ)
 
     login_part_one(driver, email)
     wait_for_element(driver, By.ID, "root_forgot_password_link").click()
@@ -44,7 +48,7 @@ def reset_password(email):
 
     recovery_url = input("Recovery requested. Please check your email and paste the recovery URL here:")
 
-    driver = webdriver.Firefox()
+    driver = get_webdriver(driver_typ)
     driver.get(recovery_url)
     passwd = get_random_password()
     print(passwd)
@@ -100,6 +104,7 @@ def main():
     )
 
     parser.add_argument("email", help="Email associated with the AWS account")
+    parser.add_argument("--driver", default="Firefox", help="Selenium driver to use (typical values: Firefox, Chrome)")
     args = parser.parse_args()
 
     print("WARNING - If you proceed here, you will CLOSE the following AWS Account")
@@ -112,9 +117,9 @@ def main():
     args.password = getpass("Password (empty for password reset):")
 
     if not args.password or not args.password.strip():
-        args.password = reset_password(args.email)
+        args.password = reset_password(args.driver, args.email)
 
-    driver = webdriver.Firefox()
+    driver = get_webdriver(args.driver)
     login(driver, args.email, args.password)
     close_account(driver)
     sleep(1)
