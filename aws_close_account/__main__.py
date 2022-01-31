@@ -95,7 +95,7 @@ def main():
         This program requires an installed selenium driver to run.
         It was tested using the selenium driver for firefox 0.30.0
         installed from https://github.com/mozilla/geckodriver/releases .
-        The input window waits for you to input any captchas and possibly MFA Keys (not tested yet)
+        The input window waits for you to input any captchas and MFA keys.
     """
     )
 
