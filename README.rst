@@ -28,7 +28,7 @@ installed from https://github.com/mozilla/geckodriver/releases .
 
 Usage
 -----
-The Browser window waits for you to input any captchas and possibly MFA Keys (not tested yet)
+The Browser window waits for you to input any captchas and MFA Keys.
 
 Quick Start::
 
