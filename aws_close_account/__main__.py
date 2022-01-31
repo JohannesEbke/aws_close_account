@@ -9,7 +9,7 @@ from getpass import getpass
 
 
 def wait_for_element(driver, by, value):
-    print("Waiting for Element ", by, value)
+    print("....waiting for element ", by, value)
     while True:
         try:
             element = driver.find_element(by, value)
@@ -42,7 +42,7 @@ def reset_password(email):
     wait_for_element(driver, By.ID, "password_recovery_done_button").click()
     driver.close()
 
-    recovery_url = input("Paste Recovery URL:")
+    recovery_url = input("Recovery requested. Please check your email and paste the recovery URL here:")
 
     driver = webdriver.Firefox()
     driver.get(recovery_url)
@@ -101,6 +101,14 @@ def main():
 
     parser.add_argument("email", help="Email associated with the AWS account")
     args = parser.parse_args()
+
+    print("WARNING - If you proceed here, you will CLOSE the following AWS Account")
+    print()
+    print("    ", args.email)
+    print()
+    print("All resources, data and pets in it will be DELETED")
+    print("There will be NO FURTHER WARNINGS")
+    print()
     args.password = getpass("Password (empty for password reset):")
 
     if not args.password or not args.password.strip():
@@ -111,3 +119,4 @@ def main():
     close_account(driver)
     sleep(1)
     driver.close()
+    print("The account has (probably) been CLOSED. You will get an email confirmation if it has been successful.")
