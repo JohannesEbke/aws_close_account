@@ -18,13 +18,17 @@ Closing them at the end of term is boring and annoying, so I automated it.
 
 Also see https://xkcd.com/1319/
 
-Requirements
-------------
+Requirements / Installation
+---------------------------
 
 This program requires an installed selenium driver to run.
 It was tested using the selenium driver for firefox 0.30.0 
 installed from https://github.com/mozilla/geckodriver/releases .
+The selenum driver can be selected with a command line flag.
 
+To install aws-close-account to a virtualenv, do::
+
+  pip install aws-close-account
 
 Usage
 -----
