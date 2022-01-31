@@ -11,9 +11,6 @@ uninstall it once you don't need it anymore!
 .. image:: https://img.shields.io/pypi/v/aws-close-account
    :alt: PyPI
 
-.. image:: https://travis-ci.org/JohannesEbke/aws_close_account.svg?branch=master
-   :target: https://travis-ci.org/JohannesEbke/aws_close_account
-
 Why
 ---
 I am creating individual AWS accounts for my students at HM (https://hm.edu)
