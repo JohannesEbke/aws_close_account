@@ -2,7 +2,7 @@ import argparse
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import ElementNotInteractableException, NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException
 from time import sleep
 from random import choice
 from getpass import getpass
@@ -42,7 +42,7 @@ def reset_password(email):
     wait_for_element(driver, By.ID, "password_recovery_done_button").click()
     driver.close()
 
-    recovery_url = getpass("Paste Recovery URL:")
+    recovery_url = input("Paste Recovery URL:")
 
     driver = webdriver.Firefox()
     driver.get(recovery_url)
@@ -51,7 +51,7 @@ def reset_password(email):
     wait_for_element(driver, By.ID, "new_password").send_keys(passwd)
     driver.find_element(By.ID, "confirm_password").send_keys(passwd)
     driver.find_element(By.ID, "reset_password_submit").click()
-    
+
     success_link = wait_for_element(driver, By.ID, "success_link")
     if not success_link or not success_link.is_displayed():
         raise Exception("Failed to reset password!")
@@ -84,13 +84,22 @@ def close_account(driver):
         "aws-billing-account-form-input-is-fourth-closing-account",
     ]:
         driver.find_element(By.CSS_SELECTOR, f"[data-testid={testid}]").click()
-    driver.find_element(By.CSS_SELECTOR, f"[data-testid=aws-billing-account-form-button-close-account]").click()
-    wait_for_element(driver, By.CSS_SELECTOR, f"[data-testid=aws-billing-account-modal-button-close-account]").click()
+    driver.find_element(By.CSS_SELECTOR, "[data-testid=aws-billing-account-form-button-close-account]").click()
+    wait_for_element(driver, By.CSS_SELECTOR, "[data-testid=aws-billing-account-modal-button-close-account]").click()
 
 
-if __name__=="__main__":
-    parser = argparse.ArgumentParser(description="Close this AWS account.")
-    parser.add_argument("email")
+def main():
+    parser = argparse.ArgumentParser(
+        description="""
+        Close the AWS account identified by the email, optionally performing a password reset.
+        This program requires an installed selenium driver to run.
+        It was tested using the selenium driver for firefox 0.30.0
+        installed from https://github.com/mozilla/geckodriver/releases .
+        The input window waits for you to input any captchas and possibly MFA Keys (not tested yet)
+    """
+    )
+
+    parser.add_argument("email", help="Email associated with the AWS account")
     args = parser.parse_args()
     args.password = getpass("Password (empty for password reset):")
 
