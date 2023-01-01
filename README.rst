@@ -18,6 +18,12 @@ Closing them at the end of term is boring and annoying, so I automated it.
 
 Also see https://xkcd.com/1319/
 
+Since the AWS Organizations now has the Close Account feature, it seems on first glance
+that this script is superfluous. However, closing accounts has some very tight quota
+(10% of the active accounts in the organization), so this script unfortunately remains relevant.
+
+Last tested 1st of January 2023.
+
 Requirements / Installation
 ---------------------------
 
