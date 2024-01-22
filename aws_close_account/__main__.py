@@ -65,6 +65,9 @@ def reset_password(driver_typ, email):
 
 def login(driver, email, passwd):
     passwd_element = login_part_one(driver, email)
+
+    # Introduce a slight wait as password reset is not instance
+    sleep(3)
     passwd_element.send_keys(passwd)
     passwd_element.send_keys(Keys.RETURN)
     wait_for_element(driver, By.ID, "nav-usernameMenu")
@@ -79,17 +82,10 @@ def customize_cookies(driver):
 
 def close_account(driver):
     driver.get("https://console.aws.amazon.com/billing/home?#/account")
-    wait_for_element(driver, By.CSS_SELECTOR, "[data-testid=aws-billing-account-form-button-close-account]")
+    wait_for_element(driver, By.CSS_SELECTOR, "[data-testid=close-account-button]")
     driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
-    for testid in [
-        "aws-billing-account-form-input-is-closing-account",
-        "aws-billing-account-form-input-is-second-closing-account",
-        "aws-billing-account-form-input-is-third-closing-account",
-        "aws-billing-account-form-input-is-fourth-closing-account",
-    ]:
-        driver.find_element(By.CSS_SELECTOR, f"[data-testid={testid}]").click()
-    driver.find_element(By.CSS_SELECTOR, "[data-testid=aws-billing-account-form-button-close-account]").click()
-    wait_for_element(driver, By.CSS_SELECTOR, "[data-testid=aws-billing-account-modal-button-close-account]").click()
+    driver.find_element(By.CSS_SELECTOR, "[data-testid=close-account-button]").click()
+    wait_for_element(driver, By.CSS_SELECTOR, "[data-testid=close-account-modal-confirm]").click()
 
 
 def main():
