@@ -64,6 +64,9 @@ def reset_password(driver_typ, email):
 
 def login(driver, email, passwd):
     passwd_element = login_part_one(driver, email)
+
+    # Introduce a slight wait as password reset is not instant
+    sleep(3)
     passwd_element.send_keys(passwd)
     passwd_element.send_keys(Keys.RETURN)
     wait_for_element(driver, By.ID, "nav-usernameMenu")
