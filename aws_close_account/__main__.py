@@ -76,7 +76,6 @@ def close_account(driver):
     driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
     driver.find_element(By.CSS_SELECTOR, "[data-testid=close-account-button]").click()
     wait_for_element(driver, By.CSS_SELECTOR, "[data-testid=close-account-modal-confirm]").click()
-    #driver.find_element(By.CSS_SELECTOR, "[data-testid=close-account-modal-confirm]").click()
 
 
 def main():
