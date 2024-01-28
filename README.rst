@@ -22,7 +22,7 @@ Since the AWS Organizations now has the Close Account feature, it seems on first
 that this script is superfluous. However, closing accounts has some very tight quota
 (10% of the active accounts in the organization), so this script unfortunately remains relevant.
 
-Last tested 1st of January 2023.
+Last tested 28th of January 2024.
 
 Requirements / Installation
 ---------------------------
