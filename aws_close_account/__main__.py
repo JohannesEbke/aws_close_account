@@ -51,7 +51,6 @@ def reset_password(driver_typ, email):
     driver = get_webdriver(driver_typ)
     driver.get(recovery_url)
     passwd = get_random_password()
-    print(passwd)
     wait_for_element(driver, By.ID, "new_password").send_keys(passwd)
     driver.find_element(By.ID, "confirm_password").send_keys(passwd)
     driver.find_element(By.ID, "reset_password_submit").click()
@@ -68,34 +67,22 @@ def login(driver, email, passwd):
     passwd_element.send_keys(passwd)
     passwd_element.send_keys(Keys.RETURN)
     wait_for_element(driver, By.ID, "nav-usernameMenu")
-    customize_cookies(driver)
-
-
-def customize_cookies(driver):
-    wait_for_element(driver, By.CSS_SELECTOR, "[data-id=awsccc-cb-btn-customize]").click()
-    wait_for_element(driver, By.CSS_SELECTOR, "[data-id=awsccc-u-cb-performance-container]").click()
-    driver.find_element(By.CSS_SELECTOR, "[data-id=awsccc-cs-btn-save]").click()
+    wait_for_element(driver, By.CSS_SELECTOR, "[data-id=awsccc-cb-btn-continue]").click()
 
 
 def close_account(driver):
     driver.get("https://console.aws.amazon.com/billing/home?#/account")
-    wait_for_element(driver, By.CSS_SELECTOR, "[data-testid=aws-billing-account-form-button-close-account]")
+    wait_for_element(driver, By.CSS_SELECTOR, "[data-testid=close-account-button]")
     driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
-    for testid in [
-        "aws-billing-account-form-input-is-closing-account",
-        "aws-billing-account-form-input-is-second-closing-account",
-        "aws-billing-account-form-input-is-third-closing-account",
-        "aws-billing-account-form-input-is-fourth-closing-account",
-    ]:
-        driver.find_element(By.CSS_SELECTOR, f"[data-testid={testid}]").click()
-    driver.find_element(By.CSS_SELECTOR, "[data-testid=aws-billing-account-form-button-close-account]").click()
-    wait_for_element(driver, By.CSS_SELECTOR, "[data-testid=aws-billing-account-modal-button-close-account]").click()
+    driver.find_element(By.CSS_SELECTOR, "[data-testid=close-account-button]").click()
+    wait_for_element(driver, By.CSS_SELECTOR, "[data-testid=close-account-modal-confirm]").click()
+    #driver.find_element(By.CSS_SELECTOR, "[data-testid=close-account-modal-confirm]").click()
 
 
 def main():
     parser = argparse.ArgumentParser(
         description="""
-        Close the AWS account identified by the email, optionally performing a password reset.
+        Close the AWS account identified by the given email, optionally performing a password reset.
         This program requires an installed selenium driver to run.
         It was tested using the selenium driver for firefox 0.30.0
         installed from https://github.com/mozilla/geckodriver/releases .
@@ -118,6 +105,7 @@ def main():
 
     if not args.password or not args.password.strip():
         args.password = reset_password(args.driver, args.email)
+        print("Reset Password to '" + args.password + "'")
 
     driver = get_webdriver(args.driver)
     login(driver, args.email, args.password)
