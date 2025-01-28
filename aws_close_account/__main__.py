@@ -12,6 +12,15 @@ def get_webdriver(typ):
     return webdriver.__getattribute__(typ)()
 
 
+def find_any_element(driver, by, values):
+    for value in values:
+        try:
+            return driver.find_element(by, value)
+        except NoSuchElementException:
+            pass
+    raise NoSuchElementException(f"Did not find {by} any of {values}")
+
+
 def wait_for_element(driver, by, value):
     print("....waiting for element ", by, value)
     while True:
@@ -24,6 +33,19 @@ def wait_for_element(driver, by, value):
         sleep(0.1)
 
 
+def wait_for_any_element(driver, by, values):
+    print("....waiting for any of the elements ", by, values)
+    while True:
+        for value in values:
+            try:
+                element = driver.find_element(by, value)
+                if element and element.is_displayed():
+                    return element
+            except NoSuchElementException:
+                pass
+        sleep(0.1)
+
+
 def get_random_password():
     alpha = "ABCDEFGHIJKLMNOPQRSTUVW"
     return "".join(choice(alpha + alpha.lower() + "1234567890") for _ in range(42))
@@ -31,8 +53,8 @@ def get_random_password():
 
 def login_part_one(driver, email):
     driver.get("https://console.aws.amazon.com/console/home")
-    elem = driver.find_element(By.ID, "root_account_signin").click()
-    elem = wait_for_element(driver, By.ID, "resolving_input")
+    elem = find_any_element(driver, By.ID, ("root_account_signin", "rootAccountSignin")).click()
+    elem = wait_for_any_element(driver, By.ID, ("resolving_input", "resolvingInput"))
     elem.clear()
     elem.send_keys(email)
     elem.send_keys(Keys.RETURN)
@@ -43,8 +65,8 @@ def reset_password(driver_typ, email):
     driver = get_webdriver(driver_typ)
 
     login_part_one(driver, email)
-    wait_for_element(driver, By.ID, "root_forgot_password_link").click()
-    wait_for_element(driver, By.ID, "password_recovery_done_button").click()
+    wait_for_any_element(driver, By.ID, ("root_forgot_password_link", "rootForgotPasswordLink")).click()
+    wait_for_any_element(driver, By.ID, ("password_recovery_done_button", "passwordRecoveryDoneButton")).click()
     driver.close()
 
     recovery_url = input("Recovery requested. Please check your email and paste the recovery URL here:")
@@ -52,11 +74,11 @@ def reset_password(driver_typ, email):
     driver = get_webdriver(driver_typ)
     driver.get(recovery_url)
     passwd = get_random_password()
-    wait_for_element(driver, By.ID, "new_password").send_keys(passwd)
-    driver.find_element(By.ID, "confirm_password").send_keys(passwd)
-    driver.find_element(By.ID, "reset_password_submit").click()
+    wait_for_any_element(driver, By.ID, ("new_password", "newPassword")).send_keys(passwd)
+    find_any_element(driver, By.ID, ("confirm_password", "confirmPassword")).send_keys(passwd)
+    find_any_element(driver, By.ID, ("reset_password_submit", "resetPasswordSubmit")).click()
 
-    success_link = wait_for_element(driver, By.ID, "success_link")
+    success_link = wait_for_any_element(driver, By.ID, ("success_link", "successLink"))
     if not success_link or not success_link.is_displayed():
         raise Exception("Failed to reset password!")
     driver.close()
@@ -76,13 +98,25 @@ def login(driver, email, passwd):
 
 def close_account(driver):
     driver.get("https://console.aws.amazon.com/billing/home?#/account")
-    wait_for_element(driver, By.CSS_SELECTOR, "[data-testid=close-account-button-root]").click()
-    elem = driver.find_element(By.CSS_SELECTOR, "[data-testid=closeAccountInput] > input")
+    wait_for_any_element(
+        driver, By.CSS_SELECTOR, ("[data-testid=close-account-button-root]", "[data-testid=closeAccountButtonRoot]")
+    ).click()
+    elem = find_any_element(
+        By.CSS_SELECTOR, (
+            "[data-testid=close-account-input] > input",
+            "[data-testid=closeAccountInput] > input",
+        )
+    )
     account_id = elem.get_attribute("placeholder")
     elem.clear()
     elem.send_keys(account_id)
     elem.send_keys(Keys.RETURN)
-    wait_for_element(driver, By.CSS_SELECTOR, "[data-testid=closeAccountButton]").click()
+    wait_for_any_element(
+        driver, By.CSS_SELECTOR, (
+            "[data-testid=close-account-button]",
+            "[data-testid=closeAccountButton]",
+        )
+    ).click()
 
 
 def main():
