@@ -31,7 +31,8 @@ def get_random_password():
 
 def login_part_one(driver, email):
     driver.get("https://console.aws.amazon.com/console/home")
-    elem = driver.find_element(By.ID, "resolving_input")
+    elem = driver.find_element(By.ID, "root_account_signin").click()
+    elem = wait_for_element(driver, By.ID, "resolving_input")
     elem.clear()
     elem.send_keys(email)
     elem.send_keys(Keys.RETURN)
@@ -70,15 +71,18 @@ def login(driver, email, passwd):
     passwd_element.send_keys(passwd)
     passwd_element.send_keys(Keys.RETURN)
     wait_for_element(driver, By.ID, "nav-usernameMenu")
-    wait_for_element(driver, By.CSS_SELECTOR, "[data-id=awsccc-cb-btn-continue]").click()
+    wait_for_element(driver, By.CSS_SELECTOR, "[data-id=awsccc-cb-btn-decline]").click()
 
 
 def close_account(driver):
     driver.get("https://console.aws.amazon.com/billing/home?#/account")
-    wait_for_element(driver, By.CSS_SELECTOR, "[data-testid=close-account-button]")
-    driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
-    driver.find_element(By.CSS_SELECTOR, "[data-testid=close-account-button]").click()
-    wait_for_element(driver, By.CSS_SELECTOR, "[data-testid=close-account-modal-confirm]").click()
+    wait_for_element(driver, By.CSS_SELECTOR, "[data-testid=close-account-button-root]").click()
+    elem = driver.find_element(By.CSS_SELECTOR, "[data-testid=closeAccountInput] > input")
+    account_id = elem.get_attribute("placeholder")
+    elem.clear()
+    elem.send_keys(account_id)
+    elem.send_keys(Keys.RETURN)
+    wait_for_element(driver, By.CSS_SELECTOR, "[data-testid=closeAccountButton]").click()
 
 
 def main():
