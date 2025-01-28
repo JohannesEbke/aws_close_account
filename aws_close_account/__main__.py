@@ -77,10 +77,19 @@ def reset_password(driver_typ, email, recovery_url):
     driver.get(recovery_url)
     passwd = get_random_password()
     wait_for_any_element(driver, By.ID, ("new_password", "newPassword")).send_keys(passwd)
-    find_any_element(driver, By.ID, ("confirm_password", "confirmPassword")).send_keys(passwd)
-    find_any_element(driver, By.ID, ("reset_password_submit", "resetPasswordSubmit")).click()
+    confirm = find_any_element(driver, By.ID, ("confirm_password", "confirmNewPassword"))
+    confirm.send_keys(passwd)
+    confirm.send_keys(Keys.RETURN)
+    # Old interface: Button Click needed
+    try:
+        element = driver.find_element(By.ID, "reset_password_submit")
+        if element and element.is_displayed():
+            element.click()
+    except NoSuchElementException:
+        pass
+    # find_any_element(driver, By.ID, ("reset_password_submit", "[data-testid=confirm-password-change]")).click()
 
-    success_link = wait_for_any_element(driver, By.ID, ("success_link", "successLink"))
+    success_link = wait_for_any_element(driver, By.CSS_SELECTOR, ("[aria-label=Success]", "[id=success_link"))
     if not success_link or not success_link.is_displayed():
         raise Exception("Failed to reset password!")
     driver.close()
@@ -103,8 +112,7 @@ def close_account(driver):
     wait_for_any_element(
         driver, By.CSS_SELECTOR, ("[data-testid=close-account-button-root]", "[data-testid=closeAccountButtonRoot]")
     ).click()
-    elem = find_any_element(
-        By.CSS_SELECTOR, (
+    elem = find_any_element(driver, By.CSS_SELECTOR, (
             "[data-testid=close-account-input] > input",
             "[data-testid=closeAccountInput] > input",
         )
