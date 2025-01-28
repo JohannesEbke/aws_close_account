@@ -120,7 +120,8 @@ def close_account(driver):
     wait_for_any_element(
         driver, By.CSS_SELECTOR, ("[data-testid=close-account-button-root]", "[data-testid=closeAccountButtonRoot]")
     ).click()
-    elem = find_any_element(driver, By.CSS_SELECTOR, (
+    elem = find_any_element(
+        driver, By.CSS_SELECTOR, (
             "[data-testid=close-account-input] > input",
             "[data-testid=closeAccountInput] > input",
         )
