@@ -11,7 +11,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='aws_close_account',
-    version='0.3.2',
+    version='0.3.3',
     description='Programmatically close an AWS account using Selenium ',
     long_description=long_description,
     url='https://github.com/JohannesEbke/aws_close_account',
