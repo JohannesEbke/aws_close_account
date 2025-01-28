@@ -60,6 +60,7 @@ def login_part_one(driver, email):
     elem.send_keys(Keys.RETURN)
     # Old interface: Button Click needed
     try:
+        print("....clicking ID next_button")
         element = driver.find_element(By.ID, "next_button")
         if element and element.is_displayed():
             element.click()
