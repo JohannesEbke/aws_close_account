@@ -61,7 +61,7 @@ def login_part_one(driver, email):
     return wait_for_element(driver, By.ID, "password")
 
 
-def reset_password(driver_typ, email):
+def request_recovery(driver_typ, email):
     driver = get_webdriver(driver_typ)
 
     login_part_one(driver, email)
@@ -69,8 +69,10 @@ def reset_password(driver_typ, email):
     wait_for_any_element(driver, By.ID, ("password_recovery_done_button", "passwordRecoveryDoneButton")).click()
     driver.close()
 
-    recovery_url = input("Recovery requested. Please check your email and paste the recovery URL here:")
+    return input("Recovery requested. Please check your email and paste the recovery URL here:")
 
+
+def reset_password(driver_typ, email, recovery_url):
     driver = get_webdriver(driver_typ)
     driver.get(recovery_url)
     passwd = get_random_password()
@@ -141,10 +143,16 @@ def main():
     print("All resources, data and pets in it will be DELETED")
     print("There will be NO FURTHER WARNINGS")
     print()
-    args.password = getpass("Password (empty for password reset):")
+    args.password = getpass("Password OR password reset URL OR empty (for password reset):")
 
+    recovery_url = None
     if not args.password or not args.password.strip():
-        args.password = reset_password(args.driver, args.email)
+        recovery_url = request_recovery(args.driver, args.email)
+    elif args.password.strip().startswith("https://"):
+        recovery_url = args.password.strip()
+
+    if recovery_url is not None:
+        args.password = reset_password(args.driver, args.email, recovery_url)
         print("Reset Password to '" + args.password + "'")
 
     driver = get_webdriver(args.driver)
